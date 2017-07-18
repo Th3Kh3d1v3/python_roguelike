@@ -1,2 +1,2 @@
-# Sword-of-Osman
+# Python-Roguelike
 Roguelike
