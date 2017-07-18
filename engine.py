@@ -59,7 +59,7 @@ def main():
     tdl.set_font('arial10x10.png', greyscale=True, altLayout=True)
 
     root_console = tdl.init(screen_width, screen_height,
-                            title='Sword of Osman')
+                            title='Python Roguelike')
     con = tdl.Console(screen_width, screen_height)
     panel = tdl.Console(screen_width, panel_height)
 
