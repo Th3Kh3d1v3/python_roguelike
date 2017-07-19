@@ -18,10 +18,10 @@ class MessageLog:
         # Split the message if necessary, among multiple lines
         new_msg_lines = textwrap.wrap(message.text, self.width)
 
-        for x in range(len(new_msg_lines)):
-            # If the bugger is full, remove the first line to make room for the new one
+        for line in new_msg_lines:
+            # If the buffer is full, remove the first line to make room for the new one
             if len(self.messages) == self.height:
                 del self.messages[0]
 
-            # Add the new lines as a Message object, with the text and the color
-            self.messages.append(message)
+            # Add the new line as a Message object, with the text and the color
+            self.messages.append(Message(line, message.color))
