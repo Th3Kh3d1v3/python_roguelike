@@ -10,8 +10,8 @@ class RenderOrder(Enum):
 def get_names_under_mouse(mouse_coordinates, entities, game_map):
     x, y = mouse_coordinates
 
-    names = [entity.name for entity in entities
-             if entity.x == x and entity.y == y and game_map.fov[entity.x, entity.y]]
+    names = ['{0} ({1} {2})'.format(entity.name, entity.humanoid.race.name, entity.humanoid.profession.name)
+             for entity in entities if entity.x == x and entity.y == y and game_map.fov[entity.x, entity.y]]
     names = ', '.join(names)
 
     return names.capitalize()

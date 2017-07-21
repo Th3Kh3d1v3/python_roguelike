@@ -1,6 +1,7 @@
 import tdl
 
 from components.fighter import Fighter
+from components.humanoid import Humanoid, Races, Professions
 from death_functions import kill_player, kill_monster
 from entity import Entity, get_blocking_entities_at_location
 from game_messages import MessageLog
@@ -51,9 +52,10 @@ def main():
         'darker_red': (127, 0, 0)
     }
 
+    humanoid_component = Humanoid(race=Races.Human, profession=Professions.Fighter)
     fighter_component = Fighter(hp=30, defense=2, power=5)
     player = Entity(0, 0, '@', (255, 255, 255), 'Player', blocks=True, render_order=RenderOrder.ACTOR,
-                    fighter=fighter_component)
+                    humanoid=humanoid_component, fighter=fighter_component)
     entities = [player]
 
     tdl.set_font('arial10x10.png', greyscale=True, altLayout=True)
