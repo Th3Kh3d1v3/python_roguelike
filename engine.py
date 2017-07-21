@@ -54,7 +54,7 @@ def main():
 
     humanoid_component = Humanoid(race=Races.Human, profession=Professions.Fighter)
     fighter_component = Fighter(hp=30, defense=2, power=5)
-    player = Entity(0, 0, '@', (255, 255, 255), 'Player', blocks=True, render_order=RenderOrder.ACTOR,
+    player = Entity(0, 0, '@', colors.get('white'), 'Player', blocks=True, render_order=RenderOrder.ACTOR,
                     humanoid=humanoid_component, fighter=fighter_component)
     entities = [player]
 
