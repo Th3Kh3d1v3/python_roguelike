@@ -5,10 +5,12 @@ from render_functions import RenderOrder
 
 class Entity:
     """
-    A generic object to represent players, enemies, items, etc.abs
+    A generic object to represent players, enemies, items, etc.
+    Entities consist of components determining their abilities and status.
     """
 
-    def __init__(self, x, y, char, color, name, blocks=False, render_order=RenderOrder.CORPSE, humanoid=None, fighter=None, ai=None):
+    def __init__(self, x, y, char, color, name, blocks=False, render_order=RenderOrder.CORPSE, humanoid=None,
+                 fighter=None, ai=None):
         self.x = x
         self.y = y
         self.char = char
@@ -40,8 +42,8 @@ class Entity:
         dx = path[0][0] - self.x
         dy = path[0][1] - self.y
 
-        if game_map.walkable[path[1][0], path[1][1]] and not get_blocking_entities_at_location(entities, self.x + dx,
-                                                                                               self.y + dy):
+        if game_map.walkable[path[1][0], path[1][1]] and \
+                not get_blocking_entities_at_location(entities, self.x + dx, self.y + dy):
             self.move(dx, dy)
 
     def distance_to(self, other):
