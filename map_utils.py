@@ -69,7 +69,7 @@ def place_entities(room, entities, max_monsters_per_room, colors):
                 fighter_component = Fighter(hp=8, defense=0, power=2)
                 ai_component = BasicMonster()
                 monster = Entity(x, y, 'g', colors.get(
-                    'light_red'), 'Goblin', blocks=True, render_order=RenderOrder.ACTOR,
+                    'red'), 'Goblin', blocks=True, render_order=RenderOrder.ACTOR,
                                  humanoid=humanoid_component, fighter=fighter_component, ai=ai_component)
             elif chance < 80:
                 humanoid_component = Humanoid(race=Races.Orc, profession=Professions.Monster)
