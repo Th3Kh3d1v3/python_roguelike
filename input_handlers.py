@@ -1,29 +1,45 @@
+# Possible commands in the game
+MoveUp = {'move': (0, -1)}
+MoveDown = {'move': (0, 1)}
+MoveLeft = {'move': (-1, 0)}
+MoveRight = {'move': (1, 0)}
+MoveUpLeft = {'move': (-1, -1)}
+MoveUpRight = {'move': (1, -1)}
+MoveDownLeft = {'move': (-1, 1)}
+MoveDownRight = {'move': (1, 1)}
+
+# Keybindings tied to commands.  Will eventually be able to be changed by user.
+keybindings = {
+    'UP': MoveUp,
+    'DOWN': MoveDown,
+    'LEFT': MoveLeft,
+    'RIGHT': MoveRight,
+    'h': MoveLeft,
+    'j': MoveDown,
+    'k': MoveUp,
+    'l': MoveRight,
+    'y': MoveUpLeft,
+    'u': MoveUpRight,
+    'b': MoveDownLeft,
+    'n': MoveDownRight
+}
+
+
 def handle_keys(user_input):
     """
-    Allows usage of normal arrow keys for cardinal directions
-    and VIM keys to include diagonal movement.
+    Checks if user input is in keybindings dictionary and returns bound command
+    If not, checks if user input corresponds with commands below:
 
     Alt-Enter toggles full screen
     Escape exits the game
     """
+
     key_char = user_input.char
 
-    if user_input.key == 'UP' or key_char == 'k':
-        return {'move': (0, -1)}
-    elif user_input.key == 'DOWN' or key_char == 'j':
-        return {'move': (0, 1)}
-    elif user_input.key == 'LEFT' or key_char == 'h':
-        return {'move': (-1, 0)}
-    elif user_input.key == 'RIGHT' or key_char == 'l':
-        return {'move': (1, 0)}
-    elif key_char == 'y':
-        return {'move': (-1, -1)}
-    elif key_char == 'u':
-        return {'move': (1, -1)}
-    elif key_char == 'b':
-        return {'move': (-1, 1)}
-    elif key_char == 'n':
-        return {'move': (1, 1)}
+    if user_input.key in keybindings:
+        return keybindings[user_input.key]
+    elif key_char in keybindings:
+        return keybindings[key_char]
 
     if user_input.key == 'ENTER' and user_input.alt:
         # Alt+Enter: toggle full screen
