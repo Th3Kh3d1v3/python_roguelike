@@ -4,6 +4,7 @@ from random import randint
 
 from components.ai import BasicMonster
 from components.fighter import Fighter
+from components.humanoid import Humanoid, Races, Professions
 from entity import Entity
 from render_functions import RenderOrder
 
@@ -62,18 +63,28 @@ def place_entities(room, entities, max_monsters_per_room, colors):
         y = randint(room.y1 + 1, room.y2 - 1)
 
         if not any([entity for entity in entities if entity.x == x and entity.y == y]):
-            if randint(0, 100) < 80:
-                fighter_component = Fighter(hp=10, defense=0, power=3)
+            chance = randint(0, 100)
+            if chance < 50:
+                humanoid_component = Humanoid(race=Races.Goblin, profession=Professions.Monster)
+                fighter_component = Fighter(hp=8, defense=0, power=2)
+                ai_component = BasicMonster()
+                monster = Entity(x, y, 'g', colors.get(
+                    'light_red'), 'Goblin', blocks=True, render_order=RenderOrder.ACTOR,
+                                 humanoid=humanoid_component, fighter=fighter_component, ai=ai_component)
+            elif chance < 80:
+                humanoid_component = Humanoid(race=Races.Orc, profession=Professions.Monster)
+                fighter_component = Fighter(hp=10, defense=1, power=3)
                 ai_component = BasicMonster()
                 monster = Entity(x, y, 'o', colors.get(
-                    'desaturated_green'), 'Orc', blocks=True, render_order=RenderOrder.ACTOR, fighter=fighter_component,
-                                 ai=ai_component)
+                    'desaturated_green'), 'Orc', blocks=True, render_order=RenderOrder.ACTOR,
+                                 humanoid=humanoid_component, fighter=fighter_component, ai=ai_component)
             else:
-                fighter_component = Fighter(hp=16, defense=1, power=4)
+                humanoid_component = Humanoid(race=Races.Troll, profession=Professions.Monster)
+                fighter_component = Fighter(hp=16, defense=2, power=4)
                 ai_component = BasicMonster()
                 monster = Entity(x, y, 'T', colors.get(
-                    'darker_green'), 'Troll', blocks=True, render_order=RenderOrder.ACTOR, fighter=fighter_component,
-                                 ai=ai_component)
+                    'darker_green'), 'Troll', blocks=True, render_order=RenderOrder.ACTOR, humanoid=humanoid_component,
+                                 fighter=fighter_component, ai=ai_component)
 
             entities.append(monster)
 
