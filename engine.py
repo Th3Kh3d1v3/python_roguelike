@@ -52,7 +52,7 @@ def main():
         'darker_red': (127, 0, 0)
     }
 
-    humanoid_component = Humanoid(race=Races.Human, profession=Professions.Fighter)
+    humanoid_component = Humanoid(race=Races.Human, profession=Professions.Fighter, level=1)
     fighter_component = Fighter(hp=30, defense=2, power=5)
     player = Entity(0, 0, '@', colors.get('white'), 'Player', blocks=True, render_order=RenderOrder.ACTOR,
                     humanoid=humanoid_component, fighter=fighter_component)

@@ -53,6 +53,9 @@ def create_v_tunnel(game_map, y1, y2, x):
         game_map.transparent[x, y] = True
 
 
+# TODO Place doors at the end of tunnels
+
+
 def place_entities(room, entities, max_monsters_per_room, colors):
     # Get a random number of monsters
     number_of_monsters = randint(0, max_monsters_per_room)
@@ -65,21 +68,21 @@ def place_entities(room, entities, max_monsters_per_room, colors):
         if not any([entity for entity in entities if entity.x == x and entity.y == y]):
             chance = randint(0, 100)
             if chance < 50:
-                humanoid_component = Humanoid(race=Races.Goblin, profession=Professions.Monster)
+                humanoid_component = Humanoid(race=Races.Goblin, profession=Professions.Monster, level=1)
                 fighter_component = Fighter(hp=8, defense=0, power=2)
                 ai_component = BasicMonster()
                 monster = Entity(x, y, 'g', colors.get(
                     'red'), 'Goblin', blocks=True, render_order=RenderOrder.ACTOR,
                                  humanoid=humanoid_component, fighter=fighter_component, ai=ai_component)
             elif chance < 80:
-                humanoid_component = Humanoid(race=Races.Orc, profession=Professions.Monster)
+                humanoid_component = Humanoid(race=Races.Orc, profession=Professions.Monster, level=1)
                 fighter_component = Fighter(hp=10, defense=1, power=3)
                 ai_component = BasicMonster()
                 monster = Entity(x, y, 'o', colors.get(
                     'desaturated_green'), 'Orc', blocks=True, render_order=RenderOrder.ACTOR,
                                  humanoid=humanoid_component, fighter=fighter_component, ai=ai_component)
             else:
-                humanoid_component = Humanoid(race=Races.Troll, profession=Professions.Monster)
+                humanoid_component = Humanoid(race=Races.Troll, profession=Professions.Monster, level=1)
                 fighter_component = Fighter(hp=16, defense=2, power=4)
                 ai_component = BasicMonster()
                 monster = Entity(x, y, 'T', colors.get(
@@ -129,7 +132,7 @@ def make_map(game_map, max_rooms, room_min_size, room_max_size, map_width, map_h
                 # center coordinates of previous room
                 (prev_x, prev_y) = rooms[num_rooms - 1].center()
 
-                # flip a coin (random number that is eitehr 0 or 1)
+                # flip a coin (random number that is either 0 or 1)
                 if randint(0, 1) == 1:
                     # first move horizontally, then vertically
                     create_h_tunnel(game_map, prev_x, new_x, prev_y)
