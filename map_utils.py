@@ -1,8 +1,8 @@
 from tdl.map import Map
 
-from random import randint
+from random import randint, choice
 
-from components.ai import BasicMonster
+from components.ai import BasicMonster, BasicNPC
 from components.fighter import Fighter
 from components.humanoid import Humanoid, Races, Professions
 from entity import Entity
@@ -92,6 +92,18 @@ def place_entities(room, entities, max_monsters_per_room, colors):
             entities.append(monster)
 
 
+def place_npcs(rooms, entities, colors):
+    room = choice(rooms)
+    x = randint(room.x1 + 1, room.x2 - 1)
+    y = randint(room.y1 + 1, room.y2 - 1)
+    humanoid_component = Humanoid(race=Races.Human, profession=Professions.Mage, level=8)
+    ai_component = BasicNPC()
+    sultan = Entity(x, y, 'H', colors.get(
+        'white'), 'Sultan', blocks=True, render_order=RenderOrder.ACTOR, humanoid=humanoid_component,
+                    ai=ai_component)
+    entities.append(sultan)
+
+
 def make_map(game_map, max_rooms, room_min_size, room_max_size, map_width, map_height, player, entities,
              max_monsters_per_room, colors):
     rooms = []
@@ -147,3 +159,5 @@ def make_map(game_map, max_rooms, room_min_size, room_max_size, map_width, map_h
             # finally, append the new room to the list
             rooms.append(new_room)
             num_rooms += 1
+
+    place_npcs(rooms, entities, colors)
