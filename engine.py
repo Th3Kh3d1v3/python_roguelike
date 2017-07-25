@@ -54,7 +54,7 @@ def main():
 
     humanoid_component = Humanoid(race=Races.Human, profession=Professions.Fighter, level=1)
     fighter_component = Fighter(hp=30, defense=2, power=5)
-    player = Entity(0, 0, '@', colors.get('white'), 'Player', blocks=True, render_order=RenderOrder.ACTOR,
+    player = Entity(0, 0, '@', colors.get('white'), 'Musaab', blocks=True, render_order=RenderOrder.ACTOR,
                     humanoid=humanoid_component, fighter=fighter_component)
     entities = [player]
 
@@ -120,10 +120,12 @@ def main():
                 target = get_blocking_entities_at_location(
                     entities, destination_x, destination_y)
 
-                if target:
+                if target and target.fighter:
                     attack_results = player.fighter.attack(target)
                     player_turn_results.extend(attack_results)
 
+                elif target and not target.fighter:
+                    pass
                 else:
                     player.move(dx, dy)
 

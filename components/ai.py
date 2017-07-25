@@ -1,3 +1,6 @@
+from game_messages import Message
+
+
 class BasicMonster:
     def take_turn(self, target, game_map, entities):
         results = []
@@ -10,5 +13,16 @@ class BasicMonster:
             elif target.fighter.hp > 0:
                 attack_results = monster.fighter.attack(target)
                 results.extend(attack_results)
+
+        return results
+
+
+class BasicNPC:
+    def take_turn(self, target, game_map, entities):
+        results = []
+        npc = self.owner
+
+        if npc.distance_to(target) == 1:
+            results.append({'message': Message('Hello {0}.'.format(target.name))})
 
         return results
