@@ -13,6 +13,9 @@ Pickup = {'pickup': True}
 ShowInventory = {'show_inventory': True}
 DropInventory = {'drop_inventory': True}
 
+FullScreen = {'fullscreen': True}
+Exit = {'exit': True}
+
 # Keybindings tied to commands.  Will eventually be able to be changed by user.
 keybindings = {
     'UP': MoveUp,
@@ -57,10 +60,10 @@ def handle_player_turn_keys(user_input):
 
     if user_input.key == 'ENTER' and user_input.alt:
         # Alt+Enter: toggle full screen
-        return {'fullscreen': True}
+        return FullScreen
     elif user_input.key == 'ESCAPE':
         # Exit the game
-        return {'exit': True}
+        return Exit
 
     # No key was pressed
     return {}
@@ -68,7 +71,7 @@ def handle_player_turn_keys(user_input):
 
 def handle_targeting_keys(user_input):
     if user_input.key == 'ESCAPE':
-        return {'exit': True}
+        return Exit
 
     return {}
 
@@ -81,10 +84,10 @@ def handle_player_dead_keys(user_input):
 
     if user_input.key == 'ENTER' and user_input.alt:
         # Alt+Enter: toggle full screen
-        return {'fullscreen': True}
+        return FullScreen
     elif user_input.key == 'ESCAPE':
         # Exit the game
-        return {'exit': True}
+        return Exit
 
     # No key was pressed
     return {}
@@ -113,9 +116,9 @@ def handle_inventory_keys(user_input):
 
     if user_input.key == 'ENTER' and user_input.alt:
         # Alt+Enter: toggle full screen
-        return {'fullscreen': True}
+        return FullScreen
     elif user_input.key == 'ESCAPE':
         # Exit the game
-        return {'exit': True}
+        return Exit
 
     return {}
