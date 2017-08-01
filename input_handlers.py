@@ -16,6 +16,9 @@ DropInventory = {'drop_inventory': True}
 FullScreen = {'fullscreen': True}
 Exit = {'exit': True}
 
+NewGame = {'new_game': True}
+LoadGame = {'load_game': True}
+
 # Keybindings tied to commands.  Will eventually be able to be changed by user.
 keybindings = {
     'UP': MoveUp,
@@ -90,6 +93,20 @@ def handle_player_dead_keys(user_input):
         return Exit
 
     # No key was pressed
+    return {}
+
+
+def handle_main_menu(user_input):
+    if user_input:
+        key_char = user_input.char
+
+        if key_char == 'a':
+            return NewGame
+        elif key_char == 'b':
+            return LoadGame
+        elif key_char == 'c' or user_input.key == 'ESCAPE':
+            return Exit
+
     return {}
 
 
