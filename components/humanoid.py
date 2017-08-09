@@ -16,7 +16,6 @@ class Professions(Enum):
 
 
 class Humanoid:
-    def __init__(self, race, profession, level):
+    def __init__(self, race, profession):
         self.race = race
         self.profession = profession
-        self.level = level

@@ -1,13 +1,14 @@
-from enum import Enum
+from enum import Enum, auto
 
 from game_states import GameStates
-from menus import inventory_menu
+from menus import inventory_menu, level_up_menu, character_screen
 
 
 class RenderOrder(Enum):
-    CORPSE = 1
-    ITEM = 2
-    ACTOR = 3
+    STAIRS = auto()
+    CORPSE = auto()
+    ITEM = auto()
+    ACTOR = auto()
 
 
 def get_names_under_mouse(mouse_coordinates, entities, game_map):
@@ -65,7 +66,7 @@ def render_all(con, panel, entities, player, game_map, fov_recompute, root_conso
     entities_in_render_order = sorted(entities, key=lambda x: x.render_order.value)
     # Draw all entities in the list
     for entity in entities_in_render_order:
-        draw_entity(con, entity, game_map.fov)
+        draw_entity(con, entity, game_map)
 
     root_console.blit(con, 0, 0, screen_width, screen_height, 0, 0)
 
@@ -79,6 +80,7 @@ def render_all(con, panel, entities, player, game_map, fov_recompute, root_conso
 
     render_bar(panel, 1, 1, bar_width, 'HP', player.fighter.hp, player.fighter.max_hp, colors.get('light_red'),
                colors.get('darker_red'), colors.get('white'))
+    panel.draw_str(1, 3, 'Dungeon Level: {0}'.format(game_map.dungeon_level), fg=colors.get('white'), bg=None)
 
     panel.draw_str(1, 0, get_names_under_mouse(mouse_coordinates, entities, game_map))
 
@@ -92,14 +94,21 @@ def render_all(con, panel, entities, player, game_map, fov_recompute, root_conso
 
         inventory_menu(con, root_console, inventory_title, player.inventory, 50, screen_width, screen_height)
 
+    elif game_state == GameStates.LEVEL_UP:
+        level_up_menu(con, root_console, 'Level up! Choose a stat to raise:', player, 40, screen_width,
+                      screen_height)
+
+    elif game_state == GameStates.CHARACTER_SCREEN:
+        character_screen(root_console, player, 30, 10, screen_width, screen_height)
+
 
 def clear_all(con, entities):
     for entity in entities:
         clear_entity(con, entity)
 
 
-def draw_entity(con, entity, fov):
-    if fov[entity.x, entity.y]:
+def draw_entity(con, entity, game_map):
+    if game_map.fov[entity.x, entity.y] or (entity.stairs and game_map.explored[entity.x][entity.y]):
         con.draw_char(entity.x, entity.y, entity.char, entity.color, bg=None)
 
 
