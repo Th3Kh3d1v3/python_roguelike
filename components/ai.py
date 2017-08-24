@@ -18,6 +18,19 @@ class BasicMonster:
 
         return results
 
+    def to_json(self):
+        json_data = {
+            'name': self.__class__.__name__
+        }
+
+        return json_data
+
+    @staticmethod
+    def from_json():
+        basic_monster = BasicMonster()
+
+        return basic_monster
+
 
 class ConfusedMonster:
     def __init__(self, previous_ai, number_of_turns=10):
@@ -41,6 +54,30 @@ class ConfusedMonster:
 
         return results
 
+    def to_json(self):
+        json_data = {
+            'name': self.__class__.__name__,
+            'previous_ai': self.previous_ai.__class__.__name__,
+            'number_of_turns': self.number_of_turns
+        }
+
+        return json_data
+
+    @staticmethod
+    def from_json(json_data, owner):
+        previous_ai_name = json_data.get('previous_ai')
+        number_of_turns = json_data.get('number_of_turns')
+
+        if previous_ai_name == 'BasicMonster':
+            previous_ai = BasicMonster()
+            previous_ai.owner = owner
+        else:
+            previous_ai = None
+
+        confused_monster = ConfusedMonster(previous_ai, number_of_turns)
+
+        return confused_monster
+
 
 class BasicNPC:
     def take_turn(self, target, game_map, entities):
@@ -51,3 +88,16 @@ class BasicNPC:
             results.append({'message': Message('Hello {0}.'.format(target.name))})
 
         return results
+
+    def to_json(self):
+        json_data = {
+            'name': self.__class__.__name__
+        }
+
+        return json_data
+
+    @staticmethod
+    def from_json():
+        basic_npc = BasicNPC()
+
+        return basic_npc

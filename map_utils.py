@@ -1,13 +1,14 @@
-from random import randint, choice
+from random import randint
 
 from tdl.map import Map
 
-from components.ai import BasicMonster, BasicNPC
+from components.ai import BasicMonster
+from components.equippable import Equippable
 from components.fighter import Fighter
-from components.humanoid import Humanoid, Races, Professions
 from components.item import Item
 from components.stairs import Stairs
 from entity import Entity
+from equipment_slots import EquipmentSlots
 from game_messages import Message
 from item_functions import heal, cast_lightning, cast_fireball, cast_confuse
 from random_utils import random_choice_from_dict, from_dungeon_level
@@ -20,6 +21,59 @@ class GameMap(Map):
         self.explored = [[False for y in range(height)] for x in range(width)]
 
         self.dungeon_level = dungeon_level
+
+    def to_json(self):
+        walkable = []
+        transparent = []
+
+        for y in range(self.height):
+            walkable_row = []
+            transparent_row = []
+
+            for x in range(self.width):
+                if self.walkable[x, y]:
+                    walkable_value = True
+                else:
+                    walkable_value = False
+
+                if self.transparent[x, y]:
+                    transparent_value = True
+                else:
+                    transparent_value = False
+
+                walkable_row.append(walkable_value)
+                transparent_row.append(transparent_value)
+
+            walkable.append(walkable_row)
+            transparent.append(transparent_row)
+
+        json_data = {
+            'width': self.width,
+            'height': self.height,
+            'explored': self.explored,
+            'walkable': walkable,
+            'transparent': transparent
+        }
+
+        return json_data
+
+    @staticmethod
+    def from_json(json_data):
+        width = json_data.get('width')
+        height = json_data.get('height')
+        explored = json_data.get('explored')
+        walkable = json_data.get('walkable')
+        transparent = json_data.get('transparent')
+
+        game_map = GameMap(width, height)
+        game_map.explored = explored
+
+        for y in range(height):
+            for x in range(width):
+                game_map.walkable[x, y] = walkable[y][x]
+                game_map.transparent[x, y] = transparent[y][x]
+
+        return game_map
 
 
 class Rect:
@@ -76,6 +130,8 @@ def place_entities(room, entities, dungeon_level, colors):
 
     item_chances = {
         'healing_potion': 35,
+        'sword': from_dungeon_level([[5, 4]], dungeon_level),
+        'shield': from_dungeon_level([[15, 8]], dungeon_level),
         'lightning_scroll': from_dungeon_level([[25, 4]], dungeon_level),
         'fireball_scroll': from_dungeon_level([[25, 6]], dungeon_level),
         'confusion_scroll': from_dungeon_level([[10, 2]], dungeon_level)
@@ -89,26 +145,17 @@ def place_entities(room, entities, dungeon_level, colors):
         if not any([entity for entity in entities if entity.x == x and entity.y == y]):
             monster_choice = random_choice_from_dict(monster_chances)
 
-            if monster_choice == 'goblin':
-                humanoid_component = Humanoid(race=Races.Goblin, profession=Professions.Monster)
-                fighter_component = Fighter(hp=10, defense=1, power=3, xp=10)
-                ai_component = BasicMonster()
-                monster = Entity(x, y, 'g', colors.get(
-                    'red'), 'Goblin', blocks=True, render_order=RenderOrder.ACTOR,
-                                 humanoid=humanoid_component, fighter=fighter_component, ai=ai_component)
-            elif monster_choice == 'orc':
-                humanoid_component = Humanoid(race=Races.Orc, profession=Professions.Monster)
+            if monster_choice == 'orc':
                 fighter_component = Fighter(hp=20, defense=0, power=4, xp=35)
                 ai_component = BasicMonster()
                 monster = Entity(x, y, 'o', colors.get(
                     'desaturated_green'), 'Orc', blocks=True, render_order=RenderOrder.ACTOR,
-                                 humanoid=humanoid_component, fighter=fighter_component, ai=ai_component)
+                                 fighter=fighter_component, ai=ai_component)
             elif monster_choice == 'troll':
-                humanoid_component = Humanoid(race=Races.Troll, profession=Professions.Monster)
                 fighter_component = Fighter(hp=30, defense=2, power=8, xp=100)
                 ai_component = BasicMonster()
                 monster = Entity(x, y, 'T', colors.get(
-                    'darker_green'), 'Troll', blocks=True, render_order=RenderOrder.ACTOR, humanoid=humanoid_component,
+                    'darker_green'), 'Troll', blocks=True, render_order=RenderOrder.ACTOR,
                                  fighter=fighter_component, ai=ai_component)
 
             entities.append(monster)
@@ -124,6 +171,12 @@ def place_entities(room, entities, dungeon_level, colors):
                 item_component = Item(use_function=heal, amount=40)
                 item = Entity(x, y, '!', colors.get('violet'), 'Healing Potion', render_order=RenderOrder.ITEM,
                               item=item_component)
+            elif item_choice == 'sword':
+                equippable_component = Equippable(EquipmentSlots.MAIN_HAND, power_bonus=3)
+                item = Entity(x, y, '/', colors.get('sky'), 'Sword', equippable=equippable_component)
+            elif item_choice == 'shield':
+                equippable_component = Equippable(EquipmentSlots.OFF_HAND, defense_bonus=1)
+                item = Entity(x, y, '[', colors.get('darker_orange'), 'Shield', equippable=equippable_component)
             elif item_choice == 'fireball_scroll':
                 item_component = Item(use_function=cast_fireball, targeting=True, targeting_message=Message(
                     'Left-click a target tile for the fireball, or right-click to cancel.', colors.get('light_cyan')),
@@ -141,18 +194,6 @@ def place_entities(room, entities, dungeon_level, colors):
                               item=item_component)
 
             entities.append(item)
-
-
-def place_npcs(rooms, entities, colors):
-    room = choice(rooms)
-    x = randint(room.x1 + 1, room.x2 - 1)
-    y = randint(room.y1 + 1, room.y2 - 1)
-    humanoid_component = Humanoid(race=Races.Human, profession=Professions.Mage)
-    ai_component = BasicNPC()
-    sultan = Entity(x, y, 'H', colors.get(
-        'white'), 'Sultan', blocks=True, render_order=RenderOrder.ACTOR, humanoid=humanoid_component,
-                    ai=ai_component)
-    entities.append(sultan)
 
 
 def make_map(game_map, max_rooms, room_min_size, room_max_size, map_width, map_height, player, entities, colors):
@@ -220,8 +261,6 @@ def make_map(game_map, max_rooms, room_min_size, room_max_size, map_width, map_h
     down_stairs = Entity(center_of_last_room_x, center_of_last_room_y, '>', colors.get('white'), 'Stairs',
                          render_order=RenderOrder.STAIRS, stairs=stairs_component)
     entities.append(down_stairs)
-
-    place_npcs(rooms, entities, colors)
 
 
 def next_floor(player, message_log, dungeon_level, constants):
