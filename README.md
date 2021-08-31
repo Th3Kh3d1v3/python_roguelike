@@ -1,2 +1,2 @@
-# Python-Roguelike
-Roguelike
+# Python Roguelike
+Roguelike written in Python
